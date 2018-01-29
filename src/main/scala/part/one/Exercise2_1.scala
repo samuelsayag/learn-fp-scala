@@ -2,7 +2,7 @@ package part.one
 
 import scala.annotation.tailrec
 
-object Exercice2_1 {
+object Exercise2_1 {
 
   def main(args: Array[String]): Unit = {
 
