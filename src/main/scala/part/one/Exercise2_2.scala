@@ -22,7 +22,6 @@ object Exercise2_2 {
         acc && ordered(as(idx - 1), as(idx)),
         idx + 1)
 
-
     if (as.length < 2) true else isLoop(acc = true, 1)
   }
 
