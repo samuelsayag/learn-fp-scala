@@ -4,17 +4,25 @@ sealed trait List[+A] {
   def tail: List[A]
 
   def setHead[B >: A](b: B): List[B]
+
+  def drop(n: Int): List[A]
 }
 
 case object Nil extends List[Nothing] {
   override def tail: List[Nothing] = this
 
   override def setHead[B >: Nothing](b: B): List[B] = List(b)
+
+  override def drop(n: Int): List[Nothing] = this
 }
 
 case class Cons[+A](head: A, tail: List[A]) extends List[A] {
 
   override def setHead[B >: A](b: B): List[B] = Cons(b, tail)
+
+  override def drop(n: Int): List[A] =
+    if (n <= 0) this
+    else tail.drop(n-1)
 }
 
 object List {
