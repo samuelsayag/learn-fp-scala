@@ -6,6 +6,8 @@ sealed trait List[+A] {
   def setHead[B >: A](b: B): List[B]
 
   def drop(n: Int): List[A]
+
+  def dropWhile(f: A => Boolean): List[A]
 }
 
 case object Nil extends List[Nothing] {
@@ -14,6 +16,8 @@ case object Nil extends List[Nothing] {
   override def setHead[B >: Nothing](b: B): List[B] = List(b)
 
   override def drop(n: Int): List[Nothing] = this
+
+  override def dropWhile(f: Nothing => Boolean): List[Nothing] = this
 }
 
 case class Cons[+A](head: A, tail: List[A]) extends List[A] {
@@ -22,7 +26,11 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A] {
 
   override def drop(n: Int): List[A] =
     if (n <= 0) this
-    else tail.drop(n-1)
+    else tail.drop(n - 1)
+
+  override def dropWhile(f: A => Boolean): List[A] =
+    if (f(head)) tail.dropWhile(f)
+    else this
 }
 
 object List {
