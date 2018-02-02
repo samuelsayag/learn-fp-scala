@@ -8,6 +8,12 @@ sealed trait List[+A] {
   def drop(n: Int): List[A]
 
   def dropWhile(f: A => Boolean): List[A]
+
+  def init: List[A]
+
+  def foldRight[B](z: B)(f: (A, B) => B): B
+
+  def length: Int
 }
 
 case object Nil extends List[Nothing] {
@@ -18,6 +24,12 @@ case object Nil extends List[Nothing] {
   override def drop(n: Int): List[Nothing] = this
 
   override def dropWhile(f: Nothing => Boolean): List[Nothing] = this
+
+  override def init: List[Nothing] = this
+
+  override def foldRight[B](z: B)(f: (Nothing, B) => B): B = z
+
+  override def length: Int = 0
 }
 
 case class Cons[+A](head: A, tail: List[A]) extends List[A] {
@@ -31,16 +43,31 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A] {
   override def dropWhile(f: A => Boolean): List[A] =
     if (f(head)) tail.dropWhile(f)
     else this
+
+  override def init: List[A] =
+    tail match {
+      case Cons(_, Nil) => Cons(head, Nil)
+      case _ => Cons(head, tail.init)
+    }
+
+  override def foldRight[B](z: B)(f: (A, B) => B): B =
+    f(head, tail.foldRight(z)(f))
+
+  override def length: Int = foldRight(0)((_, y) => 1 + y)
 }
 
 object List {
 
-  def sum(ints: List[Int]): Int = ints match {
+  def sum(ints: List[Int]): Int = ints.foldRight(0)(_ + _)
+
+  def sum1(ints: List[Int]): Int = ints match {
     case Nil => 0
     case Cons(h, t) => h + sum(t)
   }
 
-  def product(ds: List[Double]): Double = ds match {
+  def product(ds: List[Double]): Double = ds.foldRight(1.0)(_ * _)
+
+  def product1(ds: List[Double]): Double = ds match {
     case Nil => 1.0
     case Cons(0.0, _) => 0.0
     case Cons(x, xs) => x * product(xs)
