@@ -1,5 +1,7 @@
 package part.one
 
+import scala.annotation.tailrec
+
 sealed trait List[+A] {
   def tail: List[A]
 
@@ -50,8 +52,22 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A] {
       case _ => Cons(head, tail.init)
     }
 
-  override def foldRight[B](z: B)(f: (A, B) => B): B =
-    f(head, tail.foldRight(z)(f))
+  // NOT tail recursive solution of foldRight
+  //  override def foldRight[B](z: B)(f: (A, B) => B): B =
+  //    f(head, tail.foldRight(z)(f))
+
+  override def foldRight[B](z: B)(f: (A, B) => B): B = {
+    @tailrec
+    def foldLoop(acc: B, l: List[A]): B = {
+      l match {
+        case Nil => acc
+        case Cons(h, t) => foldLoop(f(h, acc), t)
+      }
+    }
+
+    foldLoop(z, this)
+  }
+
 
   override def length: Int = foldRight(0)((_, y) => 1 + y)
 }
