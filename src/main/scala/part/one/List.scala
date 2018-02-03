@@ -13,9 +13,15 @@ sealed trait List[+A] {
 
   def init: List[A]
 
+  def length: Int
+
+  def foldLeft[B](z: B)(f: (A, B) => B): B
+
+  def reverse: List[A]
+
   def foldRight[B](z: B)(f: (A, B) => B): B
 
-  def length: Int
+  def append[B >: A](b: B): List[B]
 }
 
 case object Nil extends List[Nothing] {
@@ -29,9 +35,15 @@ case object Nil extends List[Nothing] {
 
   override def init: List[Nothing] = this
 
+  override def length: Int = 0
+
+  override def foldLeft[B](z: B)(f: (Nothing, B) => B): B = z
+
+  override def reverse: List[Nothing] = this
+
   override def foldRight[B](z: B)(f: (Nothing, B) => B): B = z
 
-  override def length: Int = 0
+  override def append[B >: Nothing](b: B): List[B] = setHead(b)
 }
 
 case class Cons[+A](head: A, tail: List[A]) extends List[A] {
@@ -56,7 +68,9 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A] {
   //  override def foldRight[B](z: B)(f: (A, B) => B): B =
   //    f(head, tail.foldRight(z)(f))
 
-  override def foldRight[B](z: B)(f: (A, B) => B): B = {
+  override def length: Int = foldRight(0)((_, y) => 1 + y)
+
+  override def foldLeft[B](z: B)(f: (A, B) => B): B = {
     @tailrec
     def foldLoop(acc: B, l: List[A]): B = {
       l match {
@@ -68,8 +82,16 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A] {
     foldLoop(z, this)
   }
 
+  override def reverse: List[A] =
+    foldLeft(Nil: List[A])(Cons(_, _))
 
-  override def length: Int = foldRight(0)((_, y) => 1 + y)
+  override def foldRight[B](z: B)(f: (A, B) => B): B = {
+    val rl = this.reverse
+    rl.foldLeft(z)(f)
+  }
+
+  override def append[B >: A](b: B): List[B] = ???
+
 }
 
 object List {

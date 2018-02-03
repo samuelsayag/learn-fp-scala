@@ -1,6 +1,6 @@
 package part.one
 
-object Exercise3_12345 {
+object Exercise3_1To15 {
 
   import part.one.List._
   import utils.Helper._
@@ -18,6 +18,9 @@ object Exercise3_12345 {
     wrapPrint(() => demoSum())
     wrapPrint(() => demoProduct())
     wrapPrint(() => demoLength())
+    wrapPrint(() => demoFoldLeft())
+    wrapPrint(() => demoReverse())
+    wrapPrint(() => demoRight())
   }
 
   val z: Int = List(1, 2, 3, 4, 5) match {
@@ -30,7 +33,7 @@ object Exercise3_12345 {
 
 
   def demoLength(): Unit = {
-    val l = List(1,2,3,4)
+    val l = List(1, 2, 3, 4)
     println(s"sum of $Nil  is ${Nil.length}")
     println(s"sum of $l  is ${l.length}")
   }
@@ -79,6 +82,30 @@ object Exercise3_12345 {
     println(s"init of $Nil  is ${Nil.init}")
     println(s"init of $l is ${l.init} ")
     println(s"init of ${List(1)}  is ${List(1).init} (ex. 3.5)")
+  }
+
+  def demoFoldLeft(): Unit = {
+    val l = List(1, 2, 3, 4, 5, 6)
+    val f = (x: Int, y: Int) => {
+      println(s"Value of acc: $y")
+      x + y
+    }
+    println(s"sum (by foldRight) of $l  is ${l.foldLeft(0)(f)}")
+  }
+
+  def demoRight(): Unit = {
+    val l = List(1, 2, 3, 4, 5, 6)
+    val f = (x: Int, y: Int) => {
+      println(s"Value of acc: $y")
+      x + y
+    }
+    println(s"sum (by foldRight) of $l  is ${l.foldRight(0)(f)}")
+  }
+
+
+  def demoReverse(): Unit = {
+    val l = List(1, 2, 3, 4, 5, 6)
+    println(s"reverse of $l  is ${l.reverse}")
   }
 
 }
