@@ -21,6 +21,8 @@ object Exercise3_1To15 {
     wrapPrint(() => demoFoldLeft())
     wrapPrint(() => demoReverse())
     wrapPrint(() => demoRight())
+    wrapPrint(() => demoAppend())
+    wrapPrint(() => demoConcatenate())
   }
 
   val z: Int = List(1, 2, 3, 4, 5) match {
@@ -102,10 +104,19 @@ object Exercise3_1To15 {
     println(s"sum (by foldRight) of $l  is ${l.foldRight(0)(f)}")
   }
 
-
   def demoReverse(): Unit = {
     val l = List(1, 2, 3, 4, 5, 6)
     println(s"reverse of $l  is ${l.reverse}")
   }
 
+  def demoAppend(): Unit = {
+    val l1 = List(1, 2, 3, 4, 5, 6)
+    val l2 = List(7, 8, 9)
+    println(s"append of $l2 to $l1  is ${l1.append(l2)}")
+  }
+
+  def demoConcatenate(): Unit = {
+    val xss = List(List(1, 2), List(3, 4), List(5, 6, 7), List(8, 9))
+    println(s"concatenate of $xss is ${List.concat(xss)}")
+  }
 }

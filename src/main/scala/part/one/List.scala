@@ -21,7 +21,7 @@ sealed trait List[+A] {
 
   def foldRight[B](z: B)(f: (A, B) => B): B
 
-  def append[B >: A](b: B): List[B]
+  def append[B >: A](bs: List[B]): List[B]
 }
 
 case object Nil extends List[Nothing] {
@@ -43,7 +43,7 @@ case object Nil extends List[Nothing] {
 
   override def foldRight[B](z: B)(f: (Nothing, B) => B): B = z
 
-  override def append[B >: Nothing](b: B): List[B] = setHead(b)
+  override def append[B >: Nothing](bs: List[B]): List[B] = bs
 }
 
 case class Cons[+A](head: A, tail: List[A]) extends List[A] {
@@ -63,10 +63,6 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A] {
       case Cons(_, Nil) => Cons(head, Nil)
       case _ => Cons(head, tail.init)
     }
-
-  // NOT tail recursive solution of foldRight
-  //  override def foldRight[B](z: B)(f: (A, B) => B): B =
-  //    f(head, tail.foldRight(z)(f))
 
   override def length: Int = foldRight(0)((_, y) => 1 + y)
 
@@ -90,7 +86,8 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A] {
     rl.foldLeft(z)(f)
   }
 
-  override def append[B >: A](b: B): List[B] = ???
+  override def append[B >: A](bs: List[B]): List[B] =
+    this.foldRight(bs)(Cons(_, _))
 
 }
 
@@ -110,6 +107,9 @@ object List {
     case Cons(0.0, _) => 0.0
     case Cons(x, xs) => x * product(xs)
   }
+
+  def concat[A](xss: List[List[A]]): List[A] =
+    xss.foldRight(Nil: List[A])(_.append(_))
 
   def apply[A](as: A*): List[A] =
     if (as.isEmpty) Nil
