@@ -24,6 +24,7 @@ object Exercise3_1To17 {
     wrapPrint(() => demoAppend())
     wrapPrint(() => demoConcatenate())
     wrapPrint(() => demoAddOne())
+    wrapPrint(() => demoAddOne2())
     wrapPrint(() => demoMkString())
   }
 
@@ -127,11 +128,13 @@ object Exercise3_1To17 {
     println(s"addOne of $xs is ${List.addOne(xs)}")
   }
 
+  def demoAddOne2(): Unit = {
+    val xs = List(1, 2, 3, 4, 5, 6, 7, 8, 9)
+    println(s"addOne (with map) of $xs is ${xs.map(_ + 1)}")
+  }
 
   def demoMkString(): Unit = {
     val xs = List(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
     println(s"""mkString of $xs is "${List.mkString(xs)}" """)
   }
-
-
 }

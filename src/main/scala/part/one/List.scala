@@ -22,6 +22,8 @@ sealed trait List[+A] {
   def foldRight[B](z: B)(f: (A, B) => B): B
 
   def append[B >: A](bs: List[B]): List[B]
+
+  def map[B](f: A => B): List[B]
 }
 
 case object Nil extends List[Nothing] {
@@ -44,6 +46,8 @@ case object Nil extends List[Nothing] {
   override def foldRight[B](z: B)(f: (Nothing, B) => B): B = z
 
   override def append[B >: Nothing](bs: List[B]): List[B] = bs
+
+  override def map[B](f: Nothing => B): List[B] = Nil
 }
 
 case class Cons[+A](head: A, tail: List[A]) extends List[A] {
@@ -89,6 +93,12 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A] {
   override def append[B >: A](bs: List[B]): List[B] =
     this.foldRight(bs)(Cons(_, _))
 
+  override def map[B](f: A => B): List[B] = {
+
+    def fg(i: A, acc: List[B]) = Cons(f(i), acc)
+
+    this.foldRight(Nil: List[B])(fg)
+  }
 }
 
 object List {
@@ -123,11 +133,10 @@ object List {
     xs.foldRight(Nil: List[Int])(fg)
   }
 
-
   def mkString(xs: List[Double], sep: String = " "): String = {
     def fc(i: Double) = i.toString
 
-    def fg(i: Double, acc: String) =  acc + sep + fc(i)
+    def fg(i: Double, acc: String) = acc + sep + fc(i)
 
     xs.foldLeft("")(fg).drop(1)
   }
