@@ -1,6 +1,6 @@
 package part.one
 
-object Exercise3_1To15 {
+object Exercise3_1To17 {
 
   import part.one.List._
   import utils.Helper._
@@ -23,6 +23,8 @@ object Exercise3_1To15 {
     wrapPrint(() => demoRight())
     wrapPrint(() => demoAppend())
     wrapPrint(() => demoConcatenate())
+    wrapPrint(() => demoAddOne())
+    wrapPrint(() => demoMkString())
   }
 
   val z: Int = List(1, 2, 3, 4, 5) match {
@@ -92,7 +94,7 @@ object Exercise3_1To15 {
       println(s"Value of acc: $y")
       x + y
     }
-    println(s"sum (by foldRight) of $l  is ${l.foldLeft(0)(f)}")
+    println(s"sum (by foldLeft) of $l  is ${l.foldLeft(0)(f)}")
   }
 
   def demoRight(): Unit = {
@@ -119,4 +121,17 @@ object Exercise3_1To15 {
     val xss = List(List(1, 2), List(3, 4), List(5, 6, 7), List(8, 9))
     println(s"concatenate of $xss is ${List.concat(xss)}")
   }
+
+  def demoAddOne(): Unit = {
+    val xs = List(1, 2, 3, 4, 5, 6, 7, 8, 9)
+    println(s"addOne of $xs is ${List.addOne(xs)}")
+  }
+
+
+  def demoMkString(): Unit = {
+    val xs = List(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
+    println(s"""mkString of $xs is "${List.mkString(xs)}" """)
+  }
+
+
 }

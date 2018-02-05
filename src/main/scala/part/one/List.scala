@@ -115,4 +115,21 @@ object List {
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))
 
+  def addOne(xs: List[Int]): List[Int] = {
+    def fc(i: Int) = i + 1
+
+    def fg(i: Int, acc: List[Int]) = Cons(fc(i), acc)
+
+    xs.foldRight(Nil: List[Int])(fg)
+  }
+
+
+  def mkString(xs: List[Double], sep: String = " "): String = {
+    def fc(i: Double) = i.toString
+
+    def fg(i: Double, acc: String) =  acc + sep + fc(i)
+
+    xs.foldLeft("")(fg).drop(1)
+  }
+
 }
