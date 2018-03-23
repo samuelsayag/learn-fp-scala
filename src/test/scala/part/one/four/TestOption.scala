@@ -71,4 +71,13 @@ class TestOption extends FlatSpec {
   "List.empty[Double]" should "have a None variance" in {
     assert(OptionExercize.variance(List.empty[Double]) == None)
   }
+
+  "A list of Some()" should "give Some(List())" in {
+    assert(OptionExercize.sequence(List(1, 2, 3, 4, 5, 6, 7, 8, 9).map(Some(_))) ==
+      Some(List(1, 2, 3, 4, 5, 6, 7, 8, 9)))
+  }
+
+  "A list of Some() with a None" should "give None" in {
+    assert(OptionExercize.sequence(List(Some(1), None, Some(3))) == None)
+  }
 }
