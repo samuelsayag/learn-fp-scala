@@ -63,4 +63,12 @@ class TestOption extends FlatSpec {
   "None.filter(_ < 4)" should "return None" in {
     assert(part.one.four.None.asInstanceOf[Option[Int]].filter(_ < 4) == None)
   }
+
+  "List(1,2,3,4,5,6,7,8,9)" should "have a not None variance" in {
+    assert(OptionExercize.variance(List(1, 2, 3, 4, 5, 6, 7, 8, 9)) != None)
+  }
+
+  "List.empty[Double]" should "have a None variance" in {
+    assert(OptionExercize.variance(List.empty[Double]) == None)
+  }
 }
