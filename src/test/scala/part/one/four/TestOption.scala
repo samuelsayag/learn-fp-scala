@@ -3,7 +3,6 @@ package part.one.four
 import org.scalatest.FlatSpec
 
 class TestOption extends FlatSpec {
-
   "Option[Int].map(_.toDouble)" should "return Option[Double]" in {
     assert(part.one.four.Some(5).
       map(_.toDouble).
