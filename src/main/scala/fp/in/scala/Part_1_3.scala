@@ -8,7 +8,22 @@ object Part_1_3 {
     //    testTail(List.tail2)
     //    testSetHead(List.setHead)
     //    testSetHead(List.setHead2)
-    testDrop()
+    //    testDrop()
+    //    testInit()
+    testCopy()
+  }
+
+  def testCopy(): Unit = {
+    val l1 = Nil
+    val l2 = Cons(1, Nil)
+    val l3 = Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
+
+    import List._
+    val f = (xs: List[Int]) => println(copy(xs))
+
+    f(l1)
+    f(l2)
+    f(l3)
   }
 
   def testTail(t: List[Int] => List[Int]): Unit = {
@@ -57,6 +72,19 @@ object Part_1_3 {
     f(l1, p)
     f(l2, p)
     f(l3, p)
+  }
+
+  def testInit(): Unit = {
+    val l1 = Nil
+    val l2 = Cons(1, Nil)
+    val l3 = Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
+
+    import List._
+    val f = (xs: List[Int]) => println(init(xs))
+
+    f(l1)
+    f(l2)
+    f(l3)
   }
 
   sealed trait List[+A] {
@@ -136,6 +164,22 @@ object Part_1_3 {
         case Nil => Nil
         case Cons(h, t) => if (f(h)) dropWhile(t, f) else l
       }
+
+    // 3.6
+    def init[A](l: List[A]): List[A] =
+      l match {
+        case Nil | Cons(_, Nil) => Nil
+        case Cons(h, t) => Cons(h, init(t))
+      }
+
+    def foldRight[A, B](l: List[A], z: B)(f: (A, B) => B): B =
+      l match {
+        case Nil => z
+        case Cons(h, t) => f(h, foldRight(t, z)(f))
+      }
+
+    // 3.8
+    def copy[A](l: List[A]): List[A] = foldRight(l, Nil: List[A])(Cons(_, _))
   }
 
 }
