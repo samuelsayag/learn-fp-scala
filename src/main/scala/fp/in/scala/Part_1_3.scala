@@ -1,5 +1,7 @@
 package fp.in.scala
 
+import scala.annotation.tailrec
+
 object Part_1_3 {
 
 
@@ -10,7 +12,49 @@ object Part_1_3 {
     //    testSetHead(List.setHead2)
     //    testDrop()
     //    testInit()
-    testCopy()
+    //    testCopy()
+    //    testLength()
+    //    testFoldRight()
+    testAppend()
+  }
+
+  def testAppend(): Unit = {
+    val (l11, l12) = (Nil, Cons(1, Nil))
+    val (l21, l22) = (Cons(1, Nil), Cons(2, Nil))
+    val (l31, l32) = (Cons(1, Cons(2, Cons(3, Cons(4, Nil)))), Cons(5, Cons(6, Cons(7, Cons(8, Nil)))))
+
+    import List._
+    val f = (l1: List[Int], l2: List[Int]) => println(append(l1, l2))
+
+    f(l11, l12)
+    f(l21, l22)
+    f(l31, l32)
+  }
+
+  def testFoldRight(): Unit = {
+    val l1 = Nil
+    val l2 = Cons(1, Nil)
+    val l3 = Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
+
+    import List._
+    val f = (xs: List[Int]) => println(foldRight2(xs, 0)(_ - _) == foldRight(xs, 0)(_ - _))
+
+    f(l1)
+    f(l2)
+    f(l3)
+  }
+
+  def testLength(): Unit = {
+    val l1 = Nil
+    val l2 = Cons(1, Nil)
+    val l3 = Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
+
+    import List._
+    val f = (xs: List[Int]) => println(length(xs))
+
+    f(l1)
+    f(l2)
+    f(l3)
   }
 
   def testCopy(): Unit = {
@@ -113,18 +157,19 @@ object Part_1_3 {
       if (as.isEmpty) Nil
       else Cons(as.head, apply(as.tail: _*))
 
-    def sum(xs: List[Int]): Int =
+    def sum2(xs: List[Int]): Int =
       xs match {
         case Nil => 0
         case Cons(h, t) => h + sum(t)
       }
 
-    def product(xs: List[Double]): Double =
+    def product2(xs: List[Double]): Double =
       xs match {
         case Nil => 1
         case Cons(0.0, _) => 0
         case Cons(h, t) => h * product(t)
       }
+
 
     // 3.2
     def tail[A](xs: List[A]): List[A] =
@@ -172,14 +217,47 @@ object Part_1_3 {
         case Cons(h, t) => Cons(h, init(t))
       }
 
-    def foldRight[A, B](l: List[A], z: B)(f: (A, B) => B): B =
+    def foldRight2[A, B](l: List[A], z: B)(f: (A, B) => B): B =
       l match {
         case Nil => z
         case Cons(h, t) => f(h, foldRight(t, z)(f))
       }
 
+    // 3.13
+    def foldRight[A, B](l: List[A], z: B)(f: (A, B) => B): B = foldLeft(reverse(l), z)(f)
+
+    // 3.12
+    def reverse[A](l: List[A]): List[A] = foldLeft(l, Nil: List[A])(Cons(_, _))
+
+    // 3.10
+    def foldLeft[A, B](l: List[A], z: B)(f: (A, B) => B): B = {
+      @tailrec
+      def loop(xs: List[A], zz: B): B =
+        xs match {
+          case Nil => zz
+          case Cons(h, t) => loop(t, f(h, zz))
+        }
+
+      loop(l, z)
+    }
+
     // 3.8
     def copy[A](l: List[A]): List[A] = foldRight(l, Nil: List[A])(Cons(_, _))
+
+    // 3.9
+    def length2[A](l: List[A]): Int = foldRight(l, 0)((_, c) => c + 1)
+
+    // 3.11
+    def length[A](l: List[A]): Int = foldLeft(l, 0)((_, c) => c + 1)
+
+    def sum(xs: List[Int]): Int = foldLeft(xs, 0)(_ + _)
+
+    def product(xs: List[Double]): Double = foldLeft(xs, 1.0)(_ * _)
+
+    // 3.14
+    def append[A](l1: List[A], l2: List[A]): List[A] =
+      foldLeft(reverse(l1), l2)((e, l) => Cons(e, l))
+
   }
 
 }
