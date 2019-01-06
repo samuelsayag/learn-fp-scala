@@ -15,7 +15,58 @@ object Part_1_3 {
     //    testCopy()
     //    testLength()
     //    testFoldRight()
-    testAppend()
+    //    testAppend()
+    //    testConcatList()
+    //    testAdd1()
+    testDouble2Str()
+  }
+
+  def testDouble2Str(): Unit = {
+    val l1 = Nil
+    val l2: List[Double] = Cons(1, Nil)
+    val l3: List[Double] = Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
+
+    import List._
+    val f = (xs: List[Double]) => println(double2Str(xs))
+
+    f(l1)
+    f(l2)
+    f(l3)
+  }
+
+  def testAdd1(): Unit = {
+    val l1 = Nil
+    val l2 = Cons(1, Nil)
+    val l3 = Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
+
+    import List._
+    val f = (xs: List[Int]) => println(add1(xs))
+
+    f(l1)
+    f(l2)
+    f(l3)
+  }
+
+  def testConcatList(): Unit = {
+    val l1 = Nil
+    val l2 = Cons(Cons(1, Nil), Nil)
+    val l3 = Cons(
+      Cons(1, Cons(2, Nil)),
+      Cons(
+        Cons(3, Cons(4, Nil)),
+        Cons(
+          Cons(5, Cons(6, Nil)),
+          Nil
+        )
+      )
+    )
+
+    import List._
+    val f = (xs: List[List[Int]]) => println(concatList(xs))
+
+    f(l1)
+    f(l2)
+    f(l3)
   }
 
   def testAppend(): Unit = {
@@ -44,18 +95,6 @@ object Part_1_3 {
     f(l3)
   }
 
-  def testLength(): Unit = {
-    val l1 = Nil
-    val l2 = Cons(1, Nil)
-    val l3 = Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
-
-    import List._
-    val f = (xs: List[Int]) => println(length(xs))
-
-    f(l1)
-    f(l2)
-    f(l3)
-  }
 
   def testCopy(): Unit = {
     val l1 = Nil
@@ -258,6 +297,24 @@ object Part_1_3 {
     def append[A](l1: List[A], l2: List[A]): List[A] =
       foldLeft(reverse(l1), l2)((e, l) => Cons(e, l))
 
+    // 3.15
+    def concatList[A](l: List[List[A]]): List[A] =
+      foldLeft(reverse(l), Nil: List[A])((a, b) => append(a, b))
+
+    // 3.16
+    def add1(l: List[Int]): List[Int] = foldLeft(reverse(l), Nil: List[Int])((e, z) => Cons(e + 1, z))
+
+    // 3.17
+    def double2Str(l: List[Double]): List[String] =
+      foldLeft(reverse(l), Nil: List[String])((e, z) => Cons(e.toString, z))
+
+    // 3.18
+    def map[A, B](l: List[A])(f: A => B): List[B] =
+      foldLeft(reverse(l), Nil: List[B])((e, z) => Cons(f(e), z))
+
+    // 3.19
+    def filter[A](l: List[A])(p: A => Boolean): List[A] =
+      foldLeft(reverse(l), Nil: List[B])((e, z) => if (p(e)) Cons(e, z) else z)
   }
 
 }
