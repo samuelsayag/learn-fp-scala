@@ -314,7 +314,7 @@ object Part_1_3 {
 
     // 3.19
     def filter[A](l: List[A])(p: A => Boolean): List[A] =
-      foldLeft(reverse(l), Nil: List[B])((e, z) => if (p(e)) Cons(e, z) else z)
+      foldLeft(reverse(l), Nil: List[A])((e, z) => if (p(e)) Cons(e, z) else z)
   }
 
 }
