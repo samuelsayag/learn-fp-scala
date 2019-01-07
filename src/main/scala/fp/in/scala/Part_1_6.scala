@@ -48,14 +48,29 @@ object Part_1_6 {
     // Double to be understood as a Double that belongs [0, 1]
 
     // 6.4
-    def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
+    def ints(count: Int)(rng: RNG): (List[Int], RNG) =
       (0 until count).foldLeft[(List[Int], RNG)]((List.empty[Int], rng)) {
         case ((l, crng), _) =>
           val (ni, nrng) = crng.nextInt
           (ni :: l, nrng)
       }
-    }
+
+    def ints2(count: Int)(rng: RNG): (List[Int], RNG) =
+      sequence((0 until count).map(_ => rint).toList)(rng)
+
   }
 
+  // 6.6
+  def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+    rng => {
+      val (a, rng1) = ra(rng)
+      val (b, rng2) = rb(rng1)
+      (f(a, b), rng2)
+    }
+
+  def both[A, B](ra: Rand[A], rb: Rand[B]): Rand[(A, B)] = map2(ra, rb)((_, _))
+
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
+    fs.foldLeft(unit(List.empty[A]))(map2[List[A], A, List[A]](_, _)((x, y) => y :: x))
 
 }
