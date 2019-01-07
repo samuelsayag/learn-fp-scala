@@ -41,8 +41,7 @@ object Part_1_6 {
     // 6.5
     val nonNegativeInt2: Rand[Int] = map(rint)(i => if (i < 0) -(i + 1) else i)
 
-    def double2(rng: RNG): (Double, RNG) =
-      map(nonNegativeInt2)(_.toDouble / (Int.MaxValue + 1))(rng)
+    val double2: Rand[Double] = map(nonNegativeInt2)(_.toDouble / (Int.MaxValue + 1))
 
     // 6.3
     // ... definition in the book is problematic.
