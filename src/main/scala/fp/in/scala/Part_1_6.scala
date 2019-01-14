@@ -12,11 +12,6 @@ object Part_1_6 {
 
   val rint: Rand[Int] = _.nextInt
 
-  def map[A, B](rna: Rand[A])(op: A => B): Rand[B] =
-    rng => {
-      val (a, nrng) = rna(rng)
-      (op(a), nrng)
-    }
 
   case class SimpleRNG(seed: Long) extends RNG {
     def nextInt(): (Int, RNG) = {
@@ -58,7 +53,7 @@ object Part_1_6 {
     def ints2(count: Int)(rng: RNG): (List[Int], RNG) =
       sequence((0 until count).map(_ => rint).toList)(rng)
 
-
+    // 6.8
     def nonNegativeLessThan(k: Int): Rand[Int] =
       flatMap[Int, Int](nonNegativeInt2) { a => {
         val n = a % k
@@ -67,18 +62,43 @@ object Part_1_6 {
       }
   }
 
+  //  def map[A, B](rna: Rand[A])(op: A => B): Rand[B] =
+  //    rng => {
+  //      val (a, nrng) = rna(rng)
+  //      (op(a), nrng)
+  //    }
+
+  // 6.9
+  def map[A, B](rna: Rand[A])(op: A => B): Rand[B] = flatMap(rna) {
+    a => unit(op(a))
+  }
+
   // 6.6
-  def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
-    rng => {
-      val (a, rng1) = ra(rng)
-      val (b, rng2) = rb(rng1)
-      (f(a, b), rng2)
+  //  def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+  //    rng => {
+  //      val (a, rng1) = ra(rng)
+  //      val (b, rng2) = rb(rng1)
+  //      (f(a, b), rng2)
+  //    }
+  //
+    def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+    flatMap(ra) { a =>
+      flatMap(rb) { b =>
+        unit(f(a, b))
+      }
     }
+
+//  def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+//    for {
+//      a <- ra
+//      b <- rb
+//    } yield unit(f(a, b))
 
   def both[A, B](ra: Rand[A], rb: Rand[B]): Rand[(A, B)] = map2(ra, rb)((_, _))
 
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
     fs.foldLeft(unit(List.empty[A]))(map2[List[A], A, List[A]](_, _)((x, y) => y :: x))
+
 
   def flatMap[A, B](ra: Rand[A])(g: A => Rand[B]): Rand[B] =
     rng => {
