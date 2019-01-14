@@ -58,6 +58,13 @@ object Part_1_6 {
     def ints2(count: Int)(rng: RNG): (List[Int], RNG) =
       sequence((0 until count).map(_ => rint).toList)(rng)
 
+
+    def nonNegativeLessThan(k: Int): Rand[Int] =
+      flatMap[Int, Int](nonNegativeInt2) { a => {
+        val n = a % k
+        if (a + (k - 1) + n > 0) unit(n) else nonNegativeLessThan(k)
+      }
+      }
   }
 
   // 6.6
@@ -73,4 +80,33 @@ object Part_1_6 {
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
     fs.foldLeft(unit(List.empty[A]))(map2[List[A], A, List[A]](_, _)((x, y) => y :: x))
 
+  def flatMap[A, B](ra: Rand[A])(g: A => Rand[B]): Rand[B] =
+    rng => {
+      val (a, nrng) = ra(rng)
+      g(a)(nrng)
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
