@@ -2,31 +2,72 @@ package fp.in.scala
 
 object Part_4_14 {
 
+  // --------------------------------------------------------------------------------------------
+  // The first version of the IO trait with just the description of the effect capability
+  // --------------------------------------------------------------------------------------------
   //  trait IO {
   //    def run(): Unit
   //  }
 
-  // with the monoid capabilities
-  trait IO {
+  // --------------------------------------------------------------------------------------------
+  // The second version of the IO trait with the monoid capabilities
+  // --------------------------------------------------------------------------------------------
+  //  trait IO {
+  //    self =>
+  //
+  //    def run(): Unit
+  //
+  //    def ++(io: IO): IO = () => {
+  //      self.run()
+  //      io.run()
+  //    }
+  //  }
+
+  // --------------------------------------------------------------------------------------------
+  // The third version of the IO trait with the monad capabilities
+  // --------------------------------------------------------------------------------------------
+  sealed trait IO[E] {
     self =>
 
-    def run(): Unit
+    import IO._
 
-    def ++(io: IO): IO = () => {
+    def run(): E
+
+    def map[B](f: E => B): IO[B] = unit(f(self.run()))
+
+    def flatMap[B](f: E => IO[B]): IO[B] = unit(f(self.run()).run())
+
+    def ++(io: IO[E]): IO[E] = unit[E] {
       self.run()
       io.run()
     }
+
+    // implement ++ with the flatMap (monad capability
+    //    def ++(io: IO[E]): IO[E] = self flatMap (_ => io)
   }
 
   object IO {
-    def empty: IO = () => {
-      ()
+    def empty: IO[Unit] = unit(())
+
+    def unit[A](a: A): IO[A] = IO(a)
+
+    def apply[A](a: A): IO[A] = new IO[A] {
+      override def run(): A = a
     }
+
+    def map[A, B](a: IO[A])(f: A => B): IO[B] = a map f
+
+    def flatMap[A, B](a: IO[A])(f: A => IO[B]): IO[B] = a flatMap f
   }
 
-  def PrintLine(msg: String): IO = new IO {
-    override def run(): Unit = println(msg)
-  }
+
+  // new version when the monad code is done
+  def PrintLine(msg: String): IO[Unit] = IO(println(msg))
+
+  // version with no IO monad
+  //  def PrintLine(msg: String): IO = new IO {
+  //    override def run(): Unit = println(msg)
+  //  }
 
 
   object GameModel {
@@ -44,7 +85,7 @@ object Part_4_14 {
         case _ => "It is a draw"
       }
 
-    def contest(p1: Player, p2: Player): IO = PrintLine(winnerMsg(winner(p1, p2)))
+    def contest(p1: Player, p2: Player): IO[Unit] = PrintLine(winnerMsg(winner(p1, p2)))
   }
 
   object TestIO {
@@ -62,7 +103,7 @@ object Part_4_14 {
 
   def main(args: Array[String]): Unit = {
     import TestIO._
-    //    contest1
-    contest2
+    //    contest1()
+    contest2()
   }
 }
