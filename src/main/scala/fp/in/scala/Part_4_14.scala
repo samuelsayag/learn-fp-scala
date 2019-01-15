@@ -64,6 +64,8 @@ object Part_4_14 {
   // new version when the monad code is done
   def PrintLine(msg: String): IO[Unit] = IO(println(msg))
 
+  def ReadLine(): IO[String] = IO(scala.io.StdIn.readLine())
+
   // version with no IO monad
   //  def PrintLine(msg: String): IO = new IO {
   //    override def run(): Unit = println(msg)
@@ -88,6 +90,11 @@ object Part_4_14 {
     def contest(p1: Player, p2: Player): IO[Unit] = PrintLine(winnerMsg(winner(p1, p2)))
   }
 
+  object TemperatureConverter {
+    def fahrenheitToCelsius(f: Double): Double = (f - 32) * 5.0 / 9.0
+
+  }
+
   object TestIO {
 
     import GameModel._
@@ -98,12 +105,21 @@ object Part_4_14 {
       (PrintLine("here is the result of the contest") ++
         PrintLine("--------------------------------------") ++
         contest(Player("alice", 555), Player("Bob", 666))).run()
+
+    def converterTemp(): Unit = {
+      (for {
+        _ <- PrintLine("Give me a temperature in Farenheit")
+        d <- ReadLine().map(_.toDouble)
+        _ <- PrintLine(s"Here it is in Celsius: ${TemperatureConverter.fahrenheitToCelsius(d)}")
+      } yield ()).run()
+    }
   }
 
 
   def main(args: Array[String]): Unit = {
     import TestIO._
     //    contest1()
-    contest2()
+    //    contest2()
+    converterTemp()
   }
 }
