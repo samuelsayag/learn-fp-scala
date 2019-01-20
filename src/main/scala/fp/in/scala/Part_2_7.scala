@@ -21,18 +21,25 @@ object Part_2_7 {
   final case class Par[E](e: E)
 
   object Par {
-    def unit[A](a: => A): Par[A] = ???
 
-    def get[A](pa: Par[A]): A = ???
+    def fork[A](a: => Par[A]):Par[A] = ???
+
+    def unit[A](a:  A): Par[A] = ???
+
+    def lazyUnit[A](a: => A): Par[A] = fork(unit(a))
+
+    def run[A](pa: Par[A]): A = ???
+
+    def map2[A, B, C](pa: Par[A], pb: Par[B])(f: (A, B) => C): Par[C] = ???
+
   }
 
-  def sumP(s: IndexedSeq[Long]): Long = {
-    if (s.length <= 1) s.headOption.getOrElse(0)
+  def sumP(s: IndexedSeq[Long]): Par[Long] = {
+    if (s.length <= 1)
+      Par.unit(s.headOption getOrElse 0)
     else {
       val (l, r) = s.splitAt(s.length / 2)
-      val p1 = Par.unit(sumP(l))
-      val p2 = Par.unit(sumP(r))
-      Par.get(p1) + Par.get(p2)
+     Par.map2(Par.fork(sumP(l)), Par.fork(sumP(r)))(_ + _)
     }
   }
 
