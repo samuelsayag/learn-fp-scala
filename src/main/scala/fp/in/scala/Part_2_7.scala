@@ -21,7 +21,6 @@ object Part_2_7 {
   }
 
   //  final case class Par[E](e: E)
-
   type Par[A] = ExecutorService => Future[A]
 
   object Par {
@@ -45,8 +44,11 @@ object Part_2_7 {
     def map[A, B](pa: Par[A])(f: A => B): Par[B] =
       map2(pa, unit(()))((a, _) => f(a))
 
-    def parMap[A,B](la: List[A])(f: A => B): Par[List[B]] =
+    def parMap[A, B](la: List[A])(f: A => B): Par[List[B]] =
       Par.sequence(la.map(asyncF(f)))
+
+    def parFilter[A](la: List[A])(f: A => Boolean): Par[List[A]] =
+      Par.sequence(la.filter(f).map(lazyUnit(_)))
 
     def sequence[A](lp: List[Par[A]]): Par[List[A]] =
       lp.foldRight(unit(List.empty[A]))((p, pl) => map2(p, pl)(_ :: _))
